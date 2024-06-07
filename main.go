@@ -112,7 +112,6 @@ func main() {
 				"code":    result.Code,
 				"message": result.Message,
 			})
-
 		}
 	})
 
@@ -225,6 +224,24 @@ func main() {
 				"code":    result.Code,
 				"message": result.Message,
 			})
+		}
+	})
+
+	r.GET("/xunity", func(c *gin.Context) {
+		sourceLang := c.Query("from")
+		targetLang := c.Query("to")
+		translateText := c.Query("text")
+		authKey := ""
+
+		result, err := translateByDeepLX(sourceLang, targetLang, translateText, authKey)
+		if err != nil {
+			log.Fatalf("Translation failed: %s", err)
+		}
+
+		if result.Code == http.StatusOK {
+			c.Writer.WriteString(result.Data)
+		} else {
+			c.Writer.WriteString(fmt.Sprintf("code: %d, message: %s", result.Code, result.Message))
 		}
 	})
 
